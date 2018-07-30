@@ -1,8 +1,6 @@
 就算有很方便的QQ作人与人间的互相联系，但是我还是享受自己创造这种联系的载体的成就感。
 <h3>工程开源地址：</h3>
-&lt;a&gt;
 
-或者：<a href="http://lanceliang2018.xyz/download/chatroom.zip">本地下载</a>
 <h3>使用方法</h3>
 1、文件内容：
 
