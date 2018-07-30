@@ -1,5 +1,6 @@
 就算有很方便的QQ作人与人间的互相联系，但是我还是享受自己创造这种联系的载体的成就感。
 <h3>工程开源地址：</h3>
+<a href="https://github.com/LanceLiang2018/chatroom">https://github.com/LanceLiang2018/chatroom</a>
 
 <h3>使用方法</h3>
 1、文件内容：
@@ -25,3 +26,7 @@ templates/    Html的模板
 Linux：screen python3 sever.py    或者    python3 sever.py &amp;    (会有回显)
 
 Windows：python sever.py
+
+3、更改端口：
+
+修改sever.py最后一行，aapp.run(port=&lt;int:port&gt;)
