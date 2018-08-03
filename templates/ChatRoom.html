@@ -32,7 +32,13 @@
     </ul>
 </div>
  </div>
-  <div class="mainWindow" style="OVERFLOW-Y: auto; OVERFLOW-X: auto; border:1px solid #AAA; position: absolute; z-index: 900; width: 663px; height: 403px; left: 8px; top: 8px;">
+  <div class="title" style="OVERFLOW-Y: auto; OVERFLOW-X: auto; border:1px solid #AAA; position: absolute; z-index: 900; width: 663px; height: 32px; left: 8px; top: 8px;">
+   <span style="font-size: 24px; top: 97px;">{{ title }} </span>
+   <span style="font-size:10px; color: #AAA;">这里下滑查看一言。</span>
+   <p id="hitokoto" style="font-size: 17px;"></p>
+   <script src="http://lanceliang2018.xyz:10003/js" defer=""></script>
+  </div>
+  <div class="mainWindow" style="OVERFLOW-Y: auto; OVERFLOW-X: auto; border:1px solid #AAA; position: absolute; z-index: 900; width: 663px; height: 363px; left: 8px; top: 48px;">
       <ul>
           {% for entry in entries %}
           <li><img src={{entry[3]}} style="width: 24px; height: 24px;"/><span style="color: blue">{{ entry[1] + ' ' + entry[2] }}</span><br>
