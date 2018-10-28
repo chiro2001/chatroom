@@ -22,14 +22,16 @@ def index():
         return render_template('ChatRoom.html', username=session['username'],
                                icon=session['icon'],
                                entries=entries,
-                               users=users)
+                               users=users,
+                               title='聊天室(迫真)',
+                               )
     if request.method == 'POST':
         timedata = time.localtime(time.time())
         data = {
             'username': session['username'],
             'message': request.form['message'],
             'time': str(timedata.tm_mon).zfill(2) + '/' + str(timedata.tm_mday).zfill(2) + ' ' + \
-                    str(timedata.tm_hour).zfill(2) + ':' + str(timedata.tm_min).zfill(2)
+                    str(timedata.tm_hour).zfill(2) + ':' + str(timedata.tm_min).zfill(2),
         }
         entry_insert(entry_get_new_id(), data['username'], data['time'], get_icon(session['email']), data['message'])
         return redirect(url_for('index'))
@@ -106,7 +108,14 @@ def sever_user_init():
 def sever_entry_init():
     global entries
     entries = list(entry_get(0))
-
+    for i in range(len(entries)):
+        entries[i] = list(entries[i])
+        s = entries[i][4]
+        line = s.split('\n')
+        sum = 0
+        for j in line:
+            sum = sum + len(j) // 35;
+        entries[i].append(entries[i][4].count('\n') + sum)
 
 def sever_init():
     sever_user_init()
@@ -118,4 +127,5 @@ app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 
 if __name__ == '__main__':
     sever_init()
-    app.run(debug=False, host='0.0.0.0', port=10086)
+    #app.run(threaded=True, debug=False, host='0.0.0.0', port=10086)
+    app.run(threaded=True, debug=False, host='0.0.0.0')

@@ -1,7 +1,7 @@
 import sqlite3 as sql
 
-conn_user = sql.connect('database.db', check_same_thread=False)
-conn_entry = sql.connect('entries.db', check_same_thread=False)
+conn_user = sql.connect('/data/www/chatroom/database.db', check_same_thread=False)
+conn_entry = sql.connect('/data/www/chatroom/entries.db', check_same_thread=False)
 
 
 def user_add(name, passwd, email):
