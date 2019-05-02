@@ -4,6 +4,7 @@ from database import *
 from db_init import clear_all
 import time
 import threading
+import os
 
 app = Flask(__name__)
 
@@ -128,6 +129,7 @@ def sever_entry_init():
             sum = sum + len(j) // 35
         entries[i].append(entries[i][4].count('\n') + sum)
 
+
 def sever_init():
     sever_user_init()
     sever_entry_init()
@@ -138,5 +140,6 @@ app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 
 if __name__ == '__main__':
     sever_init()
-    #app.run(threaded=True, debug=False, host='0.0.0.0', port=10086)
-    app.run(threaded=True, debug=False, host='0.0.0.0')
+    # app.run(threaded=True, debug=False, host='0.0.0.0', port=10086)
+    app.run(threaded=True, debug=False, host='0.0.0.0', port=os.getenv("PORT", "5000"))
+    print('Started...')
