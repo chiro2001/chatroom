@@ -1,7 +1,9 @@
 from flask import Flask, session, redirect, url_for, escape, request, render_template
 import hashlib
 from database import *
+from db_init import clear_all
 import time
+import threading
 
 app = Flask(__name__)
 
@@ -100,6 +102,15 @@ def about():
     return redirect('http://lanceliang2018.xyz/index.php/2018/07/30/chat-room/')
 
 
+@app.route('/clear_all')
+def clear():
+    # clear_all()
+    t = threading.Thread(target=clear_all)
+    t.setDaemon(True)
+    t.start()
+    return 'Thread started...'
+
+
 def sever_user_init():
     global users
     users = user_all_name()
@@ -114,7 +125,7 @@ def sever_entry_init():
         line = s.split('\n')
         sum = 0
         for j in line:
-            sum = sum + len(j) // 35;
+            sum = sum + len(j) // 35
         entries[i].append(entries[i][4].count('\n') + sum)
 
 def sever_init():

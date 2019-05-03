@@ -1,17 +1,26 @@
-import sqlite3 as sql
+# import sqlite3 as sql
+import psycopg2 as sql
 
-conn_user = sql.connect('/data/www/chatroom/database.db', check_same_thread=False)
-conn_entry = sql.connect('/data/www/chatroom/entries.db', check_same_thread=False)
+conn_user = sql.connect(host='ec2-54-243-150-10.compute-1.amazonaws.com',
+                        database='dvmjo6pvokn3v',
+                        user='icknsevpzbardh',
+                        port='5432',
+                        password='5c195733c2d92181a25b5e73f8870c9b3788157e90380bcbdef013daa743644d')
+conn_entry = sql.connect(host='ec2-54-243-150-10.compute-1.amazonaws.com',
+                        database='dvmjo6pvokn3v',
+                        user='icknsevpzbardh',
+                        port='5432',
+                        password='5c195733c2d92181a25b5e73f8870c9b3788157e90380bcbdef013daa743644d')
 
 
 def user_add(name, passwd, email):
     c = conn_user.cursor()
-    c.execute('select * from data where name = ?;', (name,))
+    c.execute('select * from data where name = %s;', (name,))
     data = c.fetchall()
     if len(data) != 0:
         return 'Name used'
     try:
-        c.execute('insert into data values (?, ?, ?);', (name, passwd, email))
+        c.execute('insert into data values (%s, %s, %s);', (name, passwd, email))
     except Exception as e:
         conn_user.commit()
         c.close()
@@ -23,7 +32,7 @@ def user_add(name, passwd, email):
 
 def user_del(name, passwd):
     c = conn_user.cursor()
-    c.execute('select * from data where name = ?;', (name, ))
+    c.execute('select * from data where name = %s;', (name, ))
     data = c.fetchall()
     if len(data) == 0:
         conn_user.commit()
@@ -33,7 +42,7 @@ def user_del(name, passwd):
         conn_user.commit()
         c.close()
         return 'Password error'
-    c.execute('delete from data where name = ?;', (name, ))
+    c.execute('delete from data where name = %s;', (name, ))
     conn_user.commit()
     c.close()
     return 'Success'
@@ -41,7 +50,7 @@ def user_del(name, passwd):
 
 def user_check(name, passwd):
     c = conn_user.cursor()
-    c.execute('select * from data where name = ?;', (name, ))
+    c.execute('select * from data where name = %s;', (name, ))
     data = c.fetchall()
     c.close()
     if len(data) == 0:
@@ -54,7 +63,7 @@ def user_check(name, passwd):
 def user_get_email(name):
     c = conn_user.cursor()
     conn_user.commit()
-    c.execute('select email from data where name = ?;', (name, ))
+    c.execute('select email from data where name = %s;', (name, ))
     data = c.fetchall()
     if len(data) == 0:
         return 'Get None'
@@ -88,7 +97,7 @@ one_page = 20
 
 def entry_get(page):
     c = conn_entry.cursor()
-    c.execute('select * from entries order by id desc limit ? offset ?;', (one_page, one_page * page))
+    c.execute('select * from entries order by id desc limit %s offset %s;', (one_page, one_page * page))
     data = c.fetchall()
     conn_entry.commit()
     c.close()
@@ -98,7 +107,7 @@ def entry_get(page):
 def entry_insert(sid, name, time, icon, message):
     c = conn_entry.cursor()
     try:
-        c.execute('insert into entries values (?, ?, ?, ?, ?)', (sid, name, time, icon, message))
+        c.execute('insert into entries values (%s, %s, %s, %s, %s)', (sid, name, time, icon, message))
     except Exception as e:
         return 'Fail, ' + str(e)
     finally:
@@ -112,7 +121,7 @@ def entry_get_new_id():
     c.execute('select nid from sid')
     data = c.fetchall()
     nid = data[0][0]
-    c.execute('update sid set nid = ? where s = 0;', (nid + 1, ))
+    c.execute('update sid set nid = %s where s = 0;', (nid + 1, ))
     conn_entry.commit()
     c.close()
     return nid
