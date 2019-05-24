@@ -40,6 +40,30 @@ def index():
         return redirect(url_for('index'))
 
 
+@app.route('/wap', methods=['GET', 'POST'])
+def wap():
+    sever_init()
+    if request.method == 'GET':
+        if not 'username' in session:
+            return redirect(url_for('login'))
+        return render_template('ChatRoom_wap.html', username=session['username'],
+                               icon=session['icon'],
+                               entries=entries,
+                               users=users,
+                               title='聊天室(迫真)',
+                               )
+    if request.method == 'POST':
+        timedata = time.localtime(time.time())
+        data = {
+            'username': session['username'],
+            'message': request.form['message'],
+            'time': str(timedata.tm_mon).zfill(2) + '/' + str(timedata.tm_mday).zfill(2) + ' ' + \
+                    str(timedata.tm_hour).zfill(2) + ':' + str(timedata.tm_min).zfill(2),
+        }
+        entry_insert(entry_get_new_id(), data['username'], data['time'], get_icon(session['email']), data['message'])
+        return redirect(url_for('index'))
+
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if 'username' in session:
