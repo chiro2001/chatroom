@@ -22,7 +22,11 @@ def index():
     if request.method == 'GET':
         if not 'username' in session:
             return redirect(url_for('login'))
-        return render_template('ChatRoom.html', username=session['username'],
+        if 'display_mode' in session and session['display_mode'] == 'wap':
+            html = 'ChatRoom_wap.html'
+        else:
+            html = 'ChatRoom.html'
+        return render_template(html, username=session['username'],
                                icon=session['icon'],
                                entries=entries,
                                users=users,
@@ -40,28 +44,16 @@ def index():
         return redirect(url_for('index'))
 
 
-@app.route('/wap', methods=['GET', 'POST'])
+@app.route('/wap', methods=['GET'])
 def wap():
-    sever_init()
-    if request.method == 'GET':
-        if not 'username' in session:
-            return redirect(url_for('login'))
-        return render_template('ChatRoom_wap.html', username=session['username'],
-                               icon=session['icon'],
-                               entries=entries,
-                               users=users,
-                               title='聊天室(迫真)',
-                               )
-    if request.method == 'POST':
-        timedata = time.localtime(time.time())
-        data = {
-            'username': session['username'],
-            'message': request.form['message'],
-            'time': str(timedata.tm_mon).zfill(2) + '/' + str(timedata.tm_mday).zfill(2) + ' ' + \
-                    str(timedata.tm_hour).zfill(2) + ':' + str(timedata.tm_min).zfill(2),
-        }
-        entry_insert(entry_get_new_id(), data['username'], data['time'], get_icon(session['email']), data['message'])
-        return redirect(url_for('index'))
+    session['display_mode'] = 'wap'
+    return redirect('/')
+
+
+@app.route('/pc', methods=['GET'])
+def pc():
+    session['display_mode'] = 'pc'
+    return redirect('/')
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -124,7 +116,7 @@ def get_history(page):
 
 @app.route('/about')
 def about():
-    return redirect('http://lanceliang2018.xyz/index.php/2018/07/30/chat-room/')
+    return redirect('https://github.com/LanceLiang2018/chatroom')
 
 
 @app.route('/clear_all')
