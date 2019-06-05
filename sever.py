@@ -5,6 +5,9 @@ from db_init import clear_all
 import time
 import threading
 import os
+import pytz
+from datetime import datetime
+
 
 app = Flask(__name__)
 
@@ -54,11 +57,14 @@ def wap():
                                )
     if request.method == 'POST':
         timedata = time.localtime(time.time())
+        cndata = datetime(timedata[0], timedata[1], timedata[2], timedata[3], timedata[4], timedata[5])
+        central = pytz.timezone('Asia/Shanghai')
+        time_cn = central.localize(cndata)
         data = {
             'username': session['username'],
             'message': request.form['message'],
-            'time': str(timedata.tm_mon).zfill(2) + '/' + str(timedata.tm_mday).zfill(2) + ' ' + \
-                    str(timedata.tm_hour).zfill(2) + ':' + str(timedata.tm_min).zfill(2),
+            'time': str(time_cn.month).zfill(2) + '/' + str(time_cn.day).zfill(2) + ' ' + \
+                    str(time_cn.hour).zfill(2) + ':' + str(time_cn.minute).zfill(2),
         }
         entry_insert(entry_get_new_id(), data['username'], data['time'], get_icon(session['email']), data['message'])
         return redirect(url_for('index'))
