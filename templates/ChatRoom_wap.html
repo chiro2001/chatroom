@@ -4,6 +4,12 @@
 <meta charset="utf-8"/>
 <title>Chat Room WAP</title>
 </head>
+<div class="title">
+   <span>{{ title }} </span>
+   <br>
+   <span id="hitokoto"></span>
+   <script src="https://v1.hitokoto.cn/?encode=js" defer=""></script>
+</div>
 <body id="">
  <div>
   <div>
@@ -19,7 +25,7 @@
   <div class="mainWindow">
       <ul>
           {% for entry in entries %}
-          <li><img src={{entry[3]}}/><span style="color: blue">{{ entry[1] + ' ' + entry[2] }}</span><br>
+          <li><span style="color: blue">{{ entry[1] + ' ' + entry[2] }}</span><br>
 	<p>{{ entry[4] }}</p>
 			  <!--<div>{{ entry[4] }}</div>-->
 		  </li>
@@ -36,7 +42,7 @@
      <a href="/logout">注销</a>
      <a href="/history/0">历史记录</a>
      <a href="/about">关于</a>
-    <a href="/wap">WAP手机版</a></p>
+    <a href="/pc">电脑版</a></p>
 </div>
 成员
  <div class="members">
@@ -46,15 +52,6 @@
         {% endfor %}
     </ul>
 </div>
-<div class="title">
-   <span>{{ title }} </span>
-   <span>这里下滑查看一言。</span>
-   <br>
-   <span id="hitokoto"></span>
-   <script src="https://v1.hitokoto.cn/?encode=js" defer=""></script>
-  </div>
-访问
-<a href="http://www.amazingcounters.com"><img border="0" src="http://cc.amazingcounters.com/counter.php?i=3227579&c=9683050" alt="AmazingCounters.com"></a>
 <br>
  </body>
 </html>

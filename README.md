@@ -34,6 +34,17 @@ Windows：python sever.py
 2018/10/28 修正
 
 textarea高度自适应
+
 右下角加入小玩意
+
 加入浏览量统计(不过只有一个统计)
+
 祝大家都开心。
+
+### 更新
+
+https://lance-chatroom.herokuapp.com/
+
+上面是heroku的托管。
+
+加入wap页面切换，老人机也可以为所欲为。
