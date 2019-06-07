@@ -67,7 +67,7 @@ def index(room: str):
         }
         entry_insert(entry_get_new_id(), data['username'], data['time'],
                      get_icon(session['email']), data['message'], room)
-        if session['email'].lower() == 'lanceliang2018@163.com' and room == 'special':
+        if session['email'].lower() == 'lanceliang2018@163.com' and 'special' in room.lower():
             my_sender = 'LanceLiang2018@163.com'  # 发件人邮箱账号
             my_pass = '1352040930smtp'  # 发件人邮箱密码
             # my_user = '1352040930@qq.com'  # 收件人邮箱账号
@@ -137,6 +137,22 @@ def login():
         session['icon'] = get_icon(session['email'])
         return redirect(url_for('to_index'))
     return render_template('login.html')
+
+
+@app.route('/delete', methods=['GET', 'POST'])
+def delete_user():
+    if 'username' in session:
+        redirect(url_for('logout'))
+    if request.method == 'POST':
+        if request.form['passwd'] != request.form['passwd2']:
+            return '两次密码不正确' + '<a href=%s>返回</a>' % url_for('delete_user')
+        hl = hashlib.md5(request.form['passwd'].encode()).hexdigest()
+        result = user_del(request.form['username'], hl)
+        if result != 'Success':
+            return result + '<a href=%s>返回</a>' % url_for('delete_user')
+        session.pop('username', None)
+        return result + '<a href=%s>首页</a>' % url_for('to_index')
+    return render_template('delete.html')
 
 
 @app.route('/logout')
