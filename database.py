@@ -1,4 +1,5 @@
 # import sqlite3 as sql
+import base64
 import psycopg2 as sql
 
 conn_user = sql.connect(host='ec2-54-243-150-10.compute-1.amazonaws.com',
@@ -95,19 +96,21 @@ def user_all():
 one_page = 20
 
 
-def entry_get(page):
+def entry_get(room: str, page: int):
     c = conn_entry.cursor()
-    c.execute('select * from entries order by id desc limit %s offset %s;', (one_page, one_page * page))
+    room_b64 = base64.b64encode(room.encode()).decode()
+    c.execute('select * from entries WHERE room = %s order by id desc limit %s offset %s;', (room_b64, one_page, one_page * page))
     data = c.fetchall()
     conn_entry.commit()
     c.close()
     return data
 
 
-def entry_insert(sid, name, time, icon, message):
+def entry_insert(sid, name, time, icon, message, room: str):
     c = conn_entry.cursor()
+    room_b64 = base64.b64encode(room.encode()).decode()
     try:
-        c.execute('insert into entries values (%s, %s, %s, %s, %s)', (sid, name, time, icon, message))
+        c.execute('insert into entries values (%s, %s, %s, %s, %s, %s)', (sid, name, time, icon, message, room_b64))
     except Exception as e:
         return 'Fail, ' + str(e)
     finally:

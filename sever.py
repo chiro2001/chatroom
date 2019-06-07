@@ -11,7 +11,7 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-entries = []
+# entries = []
 users = []
 
 
@@ -19,11 +19,26 @@ def get_icon(email):
     return'https://s.gravatar.com/avatar/' + hashlib.md5(email.encode()).hexdigest() + '?s=144'
 
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
+@app.route('/', methods=['GET'])
+def to_index():
+    return redirect('/index')
+
+
+@app.route('/<string:room>', methods=['GET', 'POST'])
+def index(room: str):
     sever_init()
     if request.method == 'GET':
-        if not 'username' in session:
+        entries = list(entry_get(room, 0))
+        for k in range(len(entries)):
+            entries[k] = list(entries[k])
+            s = entries[k][4]
+            line = s.split('\n')
+            sumi = 0
+            for j in line:
+                sumi = sumi + len(j) // 35
+            entries[k].append(entries[k][4].count('\n') + sumi)
+
+        if 'username' not in session:
             return redirect(url_for('login'))
         if 'display_mode' in session and session['display_mode'] == 'wap':
             html = 'ChatRoom_wap.html'
@@ -33,7 +48,8 @@ def index():
                                icon=session['icon'],
                                entries=entries,
                                users=users,
-                               title='聊天室(迫真)',
+                               title=room,
+                               room=room,
                                )
     if request.method == 'POST':
         timedata = time.localtime(time.time())
@@ -46,8 +62,9 @@ def index():
             'time': str(time_cn.month).zfill(2) + '/' + str(time_cn.day).zfill(2) + ' ' + \
                     str(time_cn.hour).zfill(2) + ':' + str(time_cn.minute).zfill(2),
         }
-        entry_insert(entry_get_new_id(), data['username'], data['time'], get_icon(session['email']), data['message'])
-        return redirect(url_for('index'))
+        entry_insert(entry_get_new_id(), data['username'], data['time'],
+                     get_icon(session['email']), data['message'], room)
+        return redirect('/%s' % room)
 
 
 @app.route('/wap', methods=['GET'])
@@ -74,7 +91,7 @@ def signup():
         hl = hashlib.md5(request.form['passwd'].encode()).hexdigest()
         result = user_add(request.form['username'], hl, request.form['email'].lower())
         sever_user_init()
-        return result + '<a href=%s>首页</a>' % url_for('index')
+        return result + '<a href=%s>首页</a>' % url_for('to_index')
     return render_template('signup.html')
 
 
@@ -91,7 +108,7 @@ def login():
         session['passwd'] = hl
         session['email'] = user_get_email(session['username'])
         session['icon'] = get_icon(session['email'])
-        return redirect(url_for('index'))
+        return redirect(url_for('to_index'))
     return render_template('login.html')
 
 
@@ -99,7 +116,7 @@ def login():
 def logout():
     # remove the username from the session if it's there
     session.pop('username', None)
-    return redirect(url_for('index'))
+    return redirect(url_for('to_index'))
 
 
 @app.route('/get_email/<username>')
@@ -108,16 +125,19 @@ def get_email(username):
     return email + '<br><img src=\"%s\">' % (get_icon(email))
 
 
-@app.route('/history/<int:page>', methods=['GET', 'POST'])
-def get_history(page):
-    if not 'username' in session:
+@app.route('/history/<string:room>/<int:page>', methods=['GET'])
+def get_history(room: str, page: int):
+    if 'username' not in session:
         return redirect(url_for('login'))
     if request.method == 'GET':
-        get_entries = entry_get(page)
-        return render_template('History.html', entries=get_entries)
-    if request.method == 'POST':
-        get_page = request.form['page']
-        return redirect('/history/' + get_page)
+        if 'display_mode' in session and session['display_mode'] == 'wap':
+            html = 'History_wap.html'
+        else:
+            html = 'History.html'
+        get_entries = entry_get(room, page)
+        return render_template(html, entries=get_entries, room=room,
+                               pre_page=url_for('get_history', room=room, page=max(0, page-1)),
+                               next_page=url_for('get_history', room=room, page=page+1))
 
 
 @app.route('/about')
@@ -139,22 +159,22 @@ def sever_user_init():
     users = user_all_name()
 
 
-def sever_entry_init():
-    global entries
-    entries = list(entry_get(0))
-    for i in range(len(entries)):
-        entries[i] = list(entries[i])
-        s = entries[i][4]
-        line = s.split('\n')
-        sum = 0
-        for j in line:
-            sum = sum + len(j) // 35
-        entries[i].append(entries[i][4].count('\n') + sum)
+# def sever_entry_init():
+#     global entries
+#     entries = list(entry_get(0))
+#     for i in range(len(entries)):
+#         entries[i] = list(entries[i])
+#         s = entries[i][4]
+#         line = s.split('\n')
+#         sum = 0
+#         for j in line:
+#             sum = sum + len(j) // 35
+#         entries[i].append(entries[i][4].count('\n') + sum)
 
 
 def sever_init():
     sever_user_init()
-    sever_entry_init()
+    # sever_entry_init()
 
 
 # set the secret key.  keep this really secret:

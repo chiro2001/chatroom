@@ -5,11 +5,12 @@
     <title>{{room}} - Chat History</title>
 </head>
 <body>
-<div style="OVERFLOW-Y: auto; OVERFLOW-X: auto; border:1px solid #AAA; position: absolute; z-index: 900; left: 85px; top: 35px; height: 552px; width: 847px;">
+<div>
     <ul>
       {% for entry in entries %}
-      <li><span>{{ entry[0] }}</span><img src={{entry[3]}} style="width: 24px; height: 24px;"/><span style="color: blue">{{ entry[1] + ' ' + entry[2] }}</span><br>
-          <textarea readonly="" style="width: 580px; height: 60px;">{{ entry[4] }}</textarea></li>
+      <li><span>{{ entry[0] }}</span><span style="color: blue">{{ entry[1] + ' ' + entry[2] }}</span><br>
+          <p>{{ entry[4] }}</p>
+      </li>
       {% endfor %}
     </ul>
 </div>

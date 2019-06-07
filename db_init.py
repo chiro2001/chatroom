@@ -23,7 +23,8 @@ def clear_all():
     c.close()
 
     c = conn.cursor()
-    c.execute("create table entries (id int, name varchar(512), time varchar(32), icon varchar(512), message varchar(4096));")
+    c.execute("create table entries (id int, name varchar(512), time varchar(32), "
+              "icon varchar(512), message varchar(4096), room varchar(512));")
     c.execute('create table sid (nid int, s int);')
     c.execute('insert into sid values (0, 0);')
     c.execute('update sid set nid = 1 where s = 0;')
