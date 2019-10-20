@@ -23,7 +23,7 @@
       <ul>
           {% for entry in entries %}
           <li><span style="color: blue">{{ entry[1] + ' ' + entry[2] }}</span><br>
-	<p>{{ entry[4] }}</p>
+	<p>{{ entry[4] | safe }}</p>
 			  <!--<div>{{ entry[4] }}</div>-->
 		  </li>
 

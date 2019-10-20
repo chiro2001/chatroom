@@ -112,6 +112,31 @@ def index(room: str):
         return redirect('/%s' % room)
 
 
+@app.route('/frame/<string:room>', methods=['GET'])
+def frame(room: str):
+    sever_init()
+    if request.method == 'GET':
+        entries = list(entry_get(room, 0))
+        for k in range(len(entries)):
+            entries[k] = list(entries[k])
+            s = entries[k][4]
+            line = s.split('\n')
+            sumi = 0
+            for j in line:
+                sumi = sumi + len(j) // 35
+            entries[k].append(entries[k][4].count('\n') + sumi)
+
+        html = 'ChatRoom_frame.html'
+        return render_template(html,
+                               entries=entries,
+                               title=room,
+                               room=room,
+                               target='/%s' % room
+                               )
+    if request.method == 'POST':
+        return redirect('/%s' % room)
+
+
 @app.route('/wap', methods=['GET'])
 def wap():
     session['display_mode'] = 'wap'
